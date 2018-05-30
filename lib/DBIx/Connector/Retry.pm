@@ -72,6 +72,40 @@ has connect_info => (
     required => 1,
 );
 
+=head2 mode
+
+This is just like L<DBIx::Connector/mode> except that it can be set from within the
+constructor.
+
+Unlike DBIx::Connector, the default is C<ping>, not C<no_ping>.
+
+=cut
+
+has _mode => (
+    is       => 'bare',  # use DBIx::Connector's accessor
+    isa      => Str,
+    init_arg => 'mode',
+    required => 0,
+    default  => 'ping',
+);
+
+=head2 disconnect_on_destroy
+
+This is just like L<DBIx::Connector/disconnect_on_destroy> except that it can be set
+from within the constructor.
+
+Default is on.
+
+=cut
+
+has _dond => (
+    is       => 'bare',  # use DBIx::Connector's accessor
+    isa      => Bool,
+    init_arg => 'disconnect_on_destroy',
+    required => 0,
+    default  => 1,
+);
+
 =head2 max_attempts
 
 The maximum amount of block running attempts before the Connector gives up and dies.
