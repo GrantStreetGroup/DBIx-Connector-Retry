@@ -6,6 +6,6 @@ Home page:       <https://metacpan.org/release/DBIx-Connector-Retry>
 Bug tracker:     <https://github.com/GrantStreetGroup/DBIx-Connector-Retry/issues>
 Maintainer:      Grant Street Group <developers@grantstreet.com>
 
-0.90        2018-05-30  # FIXME: Change the date before the release
+0.90        2018-05-30
 
     - Initial release
