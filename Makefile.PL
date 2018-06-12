@@ -61,11 +61,12 @@ my %WriteMakefileArgs = (
     TEST_REQUIRES => {
         # Start from "scan-perl-prereqs --pretty t"
 
+        'DBD::SQLite'             => '1.29',
+        'Path::Class'             => 0,
         'Test2::Bundle::More'     => 0,
         'Test2::Tools::Compare'   => 0,
         'Test2::Tools::Exception' => 0,
         'Test2::Tools::Explain'   => 0,
-        'Path::Class'             => 0,
     },
 );
 
