@@ -51,33 +51,24 @@ my %WriteMakefileArgs = (
     PREREQ_PM     => {
         # Start from "scan-perl-prereqs --pretty lib"
 
-        ### FIXME: Define prereqs for lib
-
-        #'Moo'                    => '2.00',  # sane minimum baseline
-        #'Types::Standard'        => '1.00',  # sane minimum baseline
-        #'Data::Float'            => 0,
-        #'List::Util'             => '1.33',  # has any/all/etc.
-        #'namespace::clean'       => 0,
+        'DBIx::Connector'        => '0.56',  # sane minimum baseline
+        'Moo'                    => '2.00',  # sane minimum baseline
+        'Scalar::Util'           => 0,
+        'Types::Common::Numeric' => '1.00',  # sane minimum baseline
+        'Types::Standard'        => '1.00',  # sane minimum baseline
+        'namespace::clean'       => 0,
     },
     TEST_REQUIRES => {
         # Start from "scan-perl-prereqs --pretty t"
 
-        ### FIXME: Define prereqs for tests
-
-        #'Test2::Bundle::More'     => 0,
-        #'Test2::Tools::Compare'   => 0,
-        #'Test2::Tools::Exception' => 0,
-        #'Test2::Tools::Explain'   => 0,
-        #'Scalar::Util'            => 0,
+        'DBD::SQLite'             => '1.29',
+        'Path::Class'             => 0,
+        'Test2::Bundle::More'     => 0,
+        'Test2::Tools::Compare'   => 0,
+        'Test2::Tools::Exception' => 0,
+        'Test2::Tools::Explain'   => 0,
     },
 );
-
-### FIXME: Delete or add to no_index
-
-# Don't index examples/*
-$WriteMakefileArgs{META_MERGE}{no_index} = { directory => [qw< examples >] };
-
-### FIXME: Add special prereqs (like runtime->suggests) or leave alone
 
 # Other prereqs not in *_REQUIRES (https://metacpan.org/pod/CPAN::Meta::Spec#Prereq-Spec)
 $WriteMakefileArgs{META_MERGE}{prereqs} = {
