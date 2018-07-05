@@ -40,7 +40,7 @@ and adapted for use in DBIx::Connector.
 ## connect\_info
 
 An arrayref that contains all of the connection details normally found in the [DBI](https://metacpan.org/pod/DBI) or
-[DBIx::Connector](https://metacpan.org/pod/DBIx::Connector) call.  This data can be changed, but won't take affect until the next
+[DBIx::Connector](https://metacpan.org/pod/DBIx::Connector) call.  This data can be changed, but won't take effect until the next
 `$dbh` re-connection cycle.
 
 Obviously, this is required.
@@ -169,15 +169,15 @@ See ["CAVEATS"](#caveats) for important behaviors/limitations.
 
 ## $dbh settings
 
-Like [DBIx::Connector](https://metacpan.org/pod/DBIx::Connector), it's important that ["connect\_info"](#connect_info) have sane connection
-settings.
+Like [DBIx::Connector](https://metacpan.org/pod/DBIx::Connector), it's important that the ["connect\_info"](#connect_info) properties have sane
+connection settings.
 
 [AutoCommit](https://metacpan.org/pod/DBI#AutoCommit) should be turned on.  Otherwise, the connection is
 considered to be already in a transaction, and no retries will be attempted.  Instead,
 use transactions via [txn](https://metacpan.org/pod/DBIx::Connector#txn).
 
 [RaiseError](https://metacpan.org/pod/DBI#RaiseError) should also be turned on, since exceptions are captured,
-and both Retry and Connector use them to determine if any of the &lt;$dbh> calls failed.
+and both Retry and Connector use them to determine if any of the `$dbh` calls failed.
 
 ## Savepoints and nested transactions
 

@@ -58,7 +58,7 @@ and adapted for use in DBIx::Connector.
 =head2 connect_info
 
 An arrayref that contains all of the connection details normally found in the L<DBI> or
-L<DBIx::Connector> call.  This data can be changed, but won't take affect until the next
+L<DBIx::Connector> call.  This data can be changed, but won't take effect until the next
 C<$dbh> re-connection cycle.
 
 Obviously, this is required.
@@ -400,15 +400,15 @@ sub _retry_loop {
 
 =head2 $dbh settings
 
-Like L<DBIx::Connector>, it's important that L</connect_info> have sane connection
-settings.
+Like L<DBIx::Connector>, it's important that the L</connect_info> properties have sane
+connection settings.
 
 L<AutoCommit|DBI/AutoCommit> should be turned on.  Otherwise, the connection is
 considered to be already in a transaction, and no retries will be attempted.  Instead,
 use transactions via L<txn|DBIx::Connector/txn>.
 
 L<RaiseError|DBI/RaiseError> should also be turned on, since exceptions are captured,
-and both Retry and Connector use them to determine if any of the <$dbh> calls failed.
+and both Retry and Connector use them to determine if any of the C<$dbh> calls failed.
 
 =head2 Savepoints and nested transactions
 

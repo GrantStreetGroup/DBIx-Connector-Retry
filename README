@@ -40,7 +40,7 @@ ATTRIBUTES
 
     An arrayref that contains all of the connection details normally found
     in the DBI or DBIx::Connector call. This data can be changed, but won't
-    take affect until the next $dbh re-connection cycle.
+    take effect until the next $dbh re-connection cycle.
 
     Obviously, this is required.
 
@@ -168,16 +168,16 @@ CAVEATS
 
  $dbh settings
 
-    Like DBIx::Connector, it's important that "connect_info" have sane
-    connection settings.
+    Like DBIx::Connector, it's important that the "connect_info" properties
+    have sane connection settings.
 
     AutoCommit should be turned on. Otherwise, the connection is considered
     to be already in a transaction, and no retries will be attempted.
     Instead, use transactions via txn.
 
     RaiseError should also be turned on, since exceptions are captured, and
-    both Retry and Connector use them to determine if any of the <$dbh>
-    calls failed.
+    both Retry and Connector use them to determine if any of the $dbh calls
+    failed.
 
  Savepoints and nested transactions
 
