@@ -1,6 +1,6 @@
 # NAME
 
-DBIx::Connector::Retry
+DBIx::Connector::Retry - DBIx::Connector with block retry support
 
 # VERSION
 
@@ -36,10 +36,6 @@ version v0.900.1
 DBIx::Connector::Retry is a Moo-based subclass of [DBIx::Connector](https://metacpan.org/pod/DBIx%3A%3AConnector) that will retry on
 failures.  Most of the interface was modeled after [DBIx::Class::Storage::BlockRunner](https://metacpan.org/pod/DBIx%3A%3AClass%3A%3AStorage%3A%3ABlockRunner)
 and adapted for use in DBIx::Connector.
-
-# NAME
-
-DBIx::Connector::Retry - DBIx::Connector with block retry support
 
 # ATTRIBUTES
 
@@ -277,20 +273,6 @@ calls work, and the default mode will return to normal after the block run.
 # SEE ALSO
 
 [DBIx::Connector](https://metacpan.org/pod/DBIx%3A%3AConnector), [DBIx::Class](https://metacpan.org/pod/DBIx%3A%3AClass)
-
-# AUTHOR
-
-Grant Street Group <developers@grantstreet.com>
-
-# LICENSE AND COPYRIGHT
-
-Copyright 2018 Grant Street Group.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the the Artistic License (2.0). You may obtain a
-copy of the full license at:
-
-[http://www.perlfoundation.org/artistic\_license\_2\_0](http://www.perlfoundation.org/artistic_license_2_0)
 
 # AUTHOR
 

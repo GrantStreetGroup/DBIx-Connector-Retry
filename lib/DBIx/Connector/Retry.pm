@@ -1,7 +1,8 @@
 package DBIx::Connector::Retry;
 
 our $AUTHORITY = 'cpan:GSG';
-our $VERSION   = '0.90';
+# ABSTRACT: DBIx::Connector with block retry support
+# VERSION
 
 use strict;
 use warnings;
@@ -17,10 +18,6 @@ use Types::Common::Numeric qw( PositiveInt );
 use namespace::clean;  # don't export the above
 
 =encoding utf8
-
-=head1 NAME
-
-DBIx::Connector::Retry - DBIx::Connector with block retry support
 
 =head1 SYNOPSIS
 
@@ -508,20 +505,6 @@ calls work, and the default mode will return to normal after the block run.
 =head1 SEE ALSO
 
 L<DBIx::Connector>, L<DBIx::Class>
-
-=head1 AUTHOR
-
-Grant Street Group <developers@grantstreet.com>
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright 2018 Grant Street Group.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the the Artistic License (2.0). You may obtain a
-copy of the full license at:
-
-L<http://www.perlfoundation.org/artistic_license_2_0>
 
 =cut
 
