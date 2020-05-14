@@ -33,8 +33,8 @@ version v0.900.1
 
 # DESCRIPTION
 
-DBIx::Connector::Retry is a Moo-based subclass of [DBIx::Connector](https://metacpan.org/pod/DBIx%3A%3AConnector) that will retry on
-failures.  Most of the interface was modeled after [DBIx::Class::Storage::BlockRunner](https://metacpan.org/pod/DBIx%3A%3AClass%3A%3AStorage%3A%3ABlockRunner)
+DBIx::Connector::Retry is a Moo-based subclass of [DBIx::Connector](https://metacpan.org/pod/DBIx::Connector) that will retry on
+failures.  Most of the interface was modeled after [DBIx::Class::Storage::BlockRunner](https://metacpan.org/pod/DBIx::Class::Storage::BlockRunner)
 and adapted for use in DBIx::Connector.
 
 # ATTRIBUTES
@@ -42,21 +42,21 @@ and adapted for use in DBIx::Connector.
 ## connect\_info
 
 An arrayref that contains all of the connection details normally found in the [DBI](https://metacpan.org/pod/DBI) or
-[DBIx::Connector](https://metacpan.org/pod/DBIx%3A%3AConnector) call.  This data can be changed, but won't take effect until the next
+[DBIx::Connector](https://metacpan.org/pod/DBIx::Connector) call.  This data can be changed, but won't take effect until the next
 `$dbh` re-connection cycle.
 
 Obviously, this is required.
 
 ## mode
 
-This is just like ["mode" in DBIx::Connector](https://metacpan.org/pod/DBIx%3A%3AConnector#mode) except that it can be set from within the
+This is just like ["mode" in DBIx::Connector](https://metacpan.org/pod/DBIx::Connector#mode) except that it can be set from within the
 constructor.
 
 Unlike DBIx::Connector, the default is `ping`, not `no_ping`.
 
 ## disconnect\_on\_destroy
 
-This is just like ["disconnect\_on\_destroy" in DBIx::Connector](https://metacpan.org/pod/DBIx%3A%3AConnector#disconnect_on_destroy) except that it can be set
+This is just like ["disconnect\_on\_destroy" in DBIx::Connector](https://metacpan.org/pod/DBIx::Connector#disconnect_on_destroy) except that it can be set
 from within the constructor.
 
 Default is on.
@@ -139,7 +139,7 @@ The last exception on the stack.
     );
 
 As this is a [Moo](https://metacpan.org/pod/Moo) class, it uses the standard Moo constructor.  The ["connect\_info"](#connect_info)
-should be specified as its own key.  The [DBI](https://metacpan.org/pod/DBI)/[DBIx::Connector](https://metacpan.org/pod/DBIx%3A%3AConnector) syntax is available,
+should be specified as its own key.  The [DBI](https://metacpan.org/pod/DBI)/[DBIx::Connector](https://metacpan.org/pod/DBIx::Connector) syntax is available,
 but only as a nicety for compatibility.
 
 # MODIFIED METHODS
@@ -154,7 +154,7 @@ but only as a nicety for compatibility.
     my $result = $conn->txn($mode => $coderef);
     $conn->txn($mode => $coderef);
 
-Both [run](https://metacpan.org/pod/DBIx%3A%3AConnector#run) and [txn](https://metacpan.org/pod/DBIx%3A%3AConnector#txn) are modified to run inside
+Both [run](https://metacpan.org/pod/DBIx::Connector#run) and [txn](https://metacpan.org/pod/DBIx::Connector#txn) are modified to run inside
 a retry loop.  If the original Connector action dies, the exception is caught, and if
 ["retry\_handler"](#retry_handler) and ["max\_attempts"](#max_attempts) allows it, the action is retried.  The database
 handle may be reset by the Connector action, according to its connection mode.
@@ -165,19 +165,19 @@ See ["CAVEATS"](#caveats) for important behaviors/limitations.
 
 ## $dbh settings
 
-Like [DBIx::Connector](https://metacpan.org/pod/DBIx%3A%3AConnector), it's important that the ["connect\_info"](#connect_info) properties have sane
+Like [DBIx::Connector](https://metacpan.org/pod/DBIx::Connector), it's important that the ["connect\_info"](#connect_info) properties have sane
 connection settings.
 
 [AutoCommit](https://metacpan.org/pod/DBI#AutoCommit) should be turned on.  Otherwise, the connection is
 considered to be already in a transaction, and no retries will be attempted.  Instead,
-use transactions via [txn](https://metacpan.org/pod/DBIx%3A%3AConnector#txn).
+use transactions via [txn](https://metacpan.org/pod/DBIx::Connector#txn).
 
 [RaiseError](https://metacpan.org/pod/DBI#RaiseError) should also be turned on, since exceptions are captured,
 and both Retry and Connector use them to determine if any of the `$dbh` calls failed.
 
 ## Savepoints and nested transactions
 
-[The svp method](https://metacpan.org/pod/DBIx%3A%3AConnector#svp) is NOT modified to work inside of a retry loop,
+[The svp method](https://metacpan.org/pod/DBIx::Connector#svp) is NOT modified to work inside of a retry loop,
 because retries are generally not possible for savepoints, and a disconnected connection
 will rollback any uncommited statements in most RDBMS.  The same goes for any `run`/`txn`
 calls attempted inside of a transaction.
@@ -226,7 +226,7 @@ Connector interface:
 
 ## Fixup mode
 
-Because of the nature of [fixup mode](https://metacpan.org/pod/DBIx%3A%3AConnector#Connection-Modes), the block may be
+Because of the nature of [fixup mode](https://metacpan.org/pod/DBIx::Connector#Connection-Modes), the block may be
 executed twice as often.  Functionally, the code looks like this:
 
     # Very simplified example
@@ -259,7 +259,7 @@ retry loop finds it.  This is only considered to be one attempt.  If it dies bec
 some other fault, it's only ran once and continues the retry loop.
 
 If this is behavior is undesirable, this can be worked around by using the ["retry\_handler"](#retry_handler)
-to change the [mode](https://metacpan.org/pod/DBIx%3A%3AConnector#mode) after the first attempt:
+to change the [mode](https://metacpan.org/pod/DBIx::Connector#mode) after the first attempt:
 
     $conn->retry_handler(sub {
         my $c = shift;
@@ -272,7 +272,7 @@ calls work, and the default mode will return to normal after the block run.
 
 # SEE ALSO
 
-[DBIx::Connector](https://metacpan.org/pod/DBIx%3A%3AConnector), [DBIx::Class](https://metacpan.org/pod/DBIx%3A%3AClass)
+[DBIx::Connector](https://metacpan.org/pod/DBIx::Connector), [DBIx::Class](https://metacpan.org/pod/DBIx::Class)
 
 # AUTHOR
 
