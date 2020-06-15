@@ -151,7 +151,9 @@ For example:
         my $err = $c->last_exception;
         $err = $err->error if blessed $err && $err->isa('DBIx::Connector::RollbackError');
 
-        $err =~ /deadlock|timeout/i;  # only retry on deadlocks or timeouts
+        # only retry on deadlocks or timeouts (only look in the first line
+        # of the error to avoid e.g. accidental matches in a stack trace)
+        $err =~ /^\V*(?:deadlock|timeout)/i;
     });
 
 Default is an always-true coderef.
