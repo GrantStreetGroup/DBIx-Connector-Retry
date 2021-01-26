@@ -175,6 +175,22 @@ has retry_handler => (
 
 sub clear_retry_handler { shift->retry_handler(sub { 1 }) }
 
+=head2 execute_method
+
+The current L<DBIx::Connector> execution method name being called, which would either be
+C<run> or C<txn>.  Since C<svp> is not overridden, it would never be encountered.  If the
+connector is not in the middle of DB block execution, this attribute is blank.
+
+=cut
+
+has execute_method => (
+    is       => 'ro',
+    isa      => Str,
+    init_arg => undef,
+    writer   => '_set_execute_method',
+    default  => '',
+);
+
 =head2 failed_attempt_count
 
 The number of failed attempts so far.  This can be used in the L</retry_handler> or
@@ -341,6 +357,7 @@ sub _retry_loop {
 
     $self->_reset_exception_stack;
     $self->_set_failed_attempt_count(0);
+    $self->_set_execute_method($method);
 
     # If we already started in a transaction, that implies nesting, so don't
     # retry the query.  We can't guarantee that the statements before the block
@@ -391,6 +408,8 @@ sub _retry_loop {
             ) if $self->retry_debug;
         }
     } while ($run_err);
+
+    $self->_set_execute_method('');
 
     return $wantarray ? @res : $res[0];
 }
