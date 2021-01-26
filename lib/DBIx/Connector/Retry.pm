@@ -133,6 +133,17 @@ has retry_debug => (
     lazy     => 1,
 );
 
+sub _warn_retry_debug {
+    my $self = shift;
+
+    my $current_attempt_count = $self->failed_attempt_count + 1;
+
+    warn sprintf(
+        'Retrying %s coderef (attempt %d) after caught exception: %s',
+        $self->execute_method, $current_attempt_count, $self->last_exception
+    );
+}
+
 =head2 retry_handler
 
 An optional handler that will be checked on each retry.  It will be passed the Connector
@@ -208,12 +219,17 @@ has failed_attempt_count => (
     lazy     => 1,
     trigger  => sub {
         my ($self, $val) = @_;
-        die sprintf (
-            'Reached max_attempts amount of %d, latest exception: %s',
-            $self->max_attempts, $self->last_exception
-        ) if $self->max_attempts <= ( $val || 0 );
+        $self->_die_from_max_attempts if $self->max_attempts <= ( $val || 0 );
     },
 );
+
+sub _die_from_max_attempts {
+    my $self = shift;
+    die sprintf (
+        'Reached max_attempts amount of %d, latest exception: %s',
+        $self->max_attempts, $self->last_exception
+    );
+}
 
 =head2 exception_stack
 
@@ -400,12 +416,7 @@ sub _retry_loop {
             die $run_err unless $self->retry_handler->($self);
 
             # Debug line
-            warn sprintf(
-                'Retrying %s coderef (attempt %d) after caught exception: %s',
-                $method,
-                $self->failed_attempt_count + 1,
-                $run_err,
-            ) if $self->retry_debug;
+            $self->_warn_retry_debug if $self->retry_debug;
         }
     } while ($run_err);
 
