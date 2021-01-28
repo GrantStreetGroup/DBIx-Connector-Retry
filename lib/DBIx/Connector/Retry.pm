@@ -371,9 +371,10 @@ foreach my $method (qw< run txn >) {
 sub _retry_loop {
     my ($self, $orig, $method, $mode, $cref, $wantarray) = @_;
 
-    $self->_reset_exception_stack;
-    $self->_set_failed_attempt_count(0);
-    $self->_set_execute_method($method);
+    # For the purposes of nesting, these variables should be localized.
+    local $self->{exception_stack}      = [];
+    local $self->{failed_attempt_count} = 0;
+    local $self->{execute_method}       = $method;
 
     # If we already started in a transaction, that implies nesting, so don't
     # retry the query.  We can't guarantee that the statements before the block
@@ -419,8 +420,6 @@ sub _retry_loop {
             $self->_warn_retry_debug if $self->retry_debug;
         }
     } while ($run_err);
-
-    $self->_set_execute_method('');
 
     return $wantarray ? @res : $res[0];
 }
