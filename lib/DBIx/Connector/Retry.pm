@@ -133,6 +133,17 @@ has retry_debug => (
     lazy     => 1,
 );
 
+sub _warn_retry_debug {
+    my $self = shift;
+
+    my $current_attempt_count = $self->failed_attempt_count + 1;
+
+    warn sprintf(
+        'Retrying %s coderef (attempt %d) after caught exception: %s',
+        $self->execute_method, $current_attempt_count, $self->last_exception
+    );
+}
+
 =head2 retry_handler
 
 An optional handler that will be checked on each retry.  It will be passed the Connector
@@ -175,6 +186,22 @@ has retry_handler => (
 
 sub clear_retry_handler { shift->retry_handler(sub { 1 }) }
 
+=head2 execute_method
+
+The current L<DBIx::Connector> execution method name being called, which would either be
+C<run> or C<txn>.  Since C<svp> is not overridden, it would never be encountered.  If the
+connector is not in the middle of DB block execution, this attribute is blank.
+
+=cut
+
+has execute_method => (
+    is       => 'ro',
+    isa      => Str,
+    init_arg => undef,
+    writer   => '_set_execute_method',
+    default  => '',
+);
+
 =head2 failed_attempt_count
 
 The number of failed attempts so far.  This can be used in the L</retry_handler> or
@@ -192,12 +219,17 @@ has failed_attempt_count => (
     lazy     => 1,
     trigger  => sub {
         my ($self, $val) = @_;
-        die sprintf (
-            'Reached max_attempts amount of %d, latest exception: %s',
-            $self->max_attempts, $self->last_exception
-        ) if $self->max_attempts <= ( $val || 0 );
+        $self->_die_from_max_attempts if $self->max_attempts <= ( $val || 0 );
     },
 );
+
+sub _die_from_max_attempts {
+    my $self = shift;
+    die sprintf (
+        'Reached max_attempts amount of %d, latest exception: %s',
+        $self->max_attempts, $self->last_exception
+    );
+}
 
 =head2 exception_stack
 
@@ -339,8 +371,10 @@ foreach my $method (qw< run txn >) {
 sub _retry_loop {
     my ($self, $orig, $method, $mode, $cref, $wantarray) = @_;
 
-    $self->_reset_exception_stack;
-    $self->_set_failed_attempt_count(0);
+    # For the purposes of nesting, these variables should be localized.
+    local $self->{exception_stack}      = [];
+    local $self->{failed_attempt_count} = 0;
+    local $self->{execute_method}       = $method;
 
     # If we already started in a transaction, that implies nesting, so don't
     # retry the query.  We can't guarantee that the statements before the block
@@ -383,12 +417,7 @@ sub _retry_loop {
             die $run_err unless $self->retry_handler->($self);
 
             # Debug line
-            warn sprintf(
-                'Retrying %s coderef (attempt %d) after caught exception: %s',
-                $method,
-                $self->failed_attempt_count + 1,
-                $run_err,
-            ) if $self->retry_debug;
+            $self->_warn_retry_debug if $self->retry_debug;
         }
     } while ($run_err);
 
