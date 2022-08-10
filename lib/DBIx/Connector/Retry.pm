@@ -398,7 +398,14 @@ sub _retry_loop {
 
     do {
         TRY: {
+            ### NOTE: Outside exception handlers shouldn't interrupt the retry process, as it might
+            ### never return back from the eval.  However, if we need to die after the retry_handler
+            ### check below, that should still go to whatever exception handler is in place.
+            ### Therefore, this "local $SIG{__DIE__}" is exactly in this TRY block and expires after
+            ### the DB error is captured.
+            local $SIG{__DIE__};
             local $@;
+
             eval {
                 unless (defined $wantarray) {           $self->$orig($mode, $cref) }
                 elsif          ($wantarray) { @res    = $self->$orig($mode, $cref) }
