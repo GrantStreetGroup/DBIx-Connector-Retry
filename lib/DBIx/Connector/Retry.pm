@@ -494,6 +494,17 @@ Connector interface:
         $_->commit;  # no, let Connector handle this process!
     });
 
+=head2 (Ab)using $dbh directly
+
+For maximum retry protection, do not use the L<dbh|DBIx::Connector/dbh> or
+L<connect|DBIx::Connector/connect> methods directly.  Directly accessing and using a DBI
+database or statement handle does NOT grant retry protection, even if it was acquired
+from those methods.  Furthermore, using those methods may trigger a connection failure,
+which isn't protected by C<eval>.
+
+Instead, only use the C<run>/C<txn> methods, and it will attempt the connection for you.
+If the connection fails, retry protection kicks in, as it's part of the same retry loop.
+
 =head2 Fixup mode
 
 Because of the nature of L<fixup mode|DBIx::Connector/Connection Modes>, the block may be
