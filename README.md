@@ -4,7 +4,7 @@ DBIx::Connector::Retry - DBIx::Connector with block retry support
 
 # VERSION
 
-version v0.900.2
+version v0.900.3
 
 # SYNOPSIS
 
@@ -232,6 +232,17 @@ Connector interface:
         $_->commit;  # no, let Connector handle this process!
     });
 
+## (Ab)using $dbh directly
+
+For maximum retry protection, do not use the [dbh](https://metacpan.org/pod/DBIx%3A%3AConnector#dbh) or
+[connect](https://metacpan.org/pod/DBIx%3A%3AConnector#connect) methods directly.  Directly accessing and using a DBI
+database or statement handle does NOT grant retry protection, even if it was acquired
+from those methods.  Furthermore, using those methods may trigger a connection failure,
+which isn't protected by `eval`.
+
+Instead, only use the `run`/`txn` methods, and it will attempt the connection for you.
+If the connection fails, retry protection kicks in, as it's part of the same retry loop.
+
 ## Fixup mode
 
 Because of the nature of [fixup mode](https://metacpan.org/pod/DBIx%3A%3AConnector#Connection-Modes), the block may be
@@ -288,7 +299,7 @@ Grant Street Group <developers@grantstreet.com>
 
 # COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2018 - 2021 by Grant Street Group.
+This software is Copyright (c) 2018 - 2022 by Grant Street Group.
 
 This is free software, licensed under:
 

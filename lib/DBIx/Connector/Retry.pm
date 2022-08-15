@@ -398,7 +398,14 @@ sub _retry_loop {
 
     do {
         TRY: {
+            ### NOTE: Outside exception handlers shouldn't interrupt the retry process, as it might
+            ### never return back from the eval.  However, if we need to die after the retry_handler
+            ### check below, that should still go to whatever exception handler is in place.
+            ### Therefore, this "local $SIG{__DIE__}" is exactly in this TRY block and expires after
+            ### the DB error is captured.
+            local $SIG{__DIE__};
             local $@;
+
             eval {
                 unless (defined $wantarray) {           $self->$orig($mode, $cref) }
                 elsif          ($wantarray) { @res    = $self->$orig($mode, $cref) }
@@ -486,6 +493,17 @@ Connector interface:
     $conn->run(ping => sub {
         $_->commit;  # no, let Connector handle this process!
     });
+
+=head2 (Ab)using $dbh directly
+
+For maximum retry protection, do not use the L<dbh|DBIx::Connector/dbh> or
+L<connect|DBIx::Connector/connect> methods directly.  Directly accessing and using a DBI
+database or statement handle does NOT grant retry protection, even if it was acquired
+from those methods.  Furthermore, using those methods may trigger a connection failure,
+which isn't protected by C<eval>.
+
+Instead, only use the C<run>/C<txn> methods, and it will attempt the connection for you.
+If the connection fails, retry protection kicks in, as it's part of the same retry loop.
 
 =head2 Fixup mode
 
